@@ -1,0 +1,38 @@
+// A small Gofra file that exercises the syntax used by the tree-sitter
+// queries. It is used by the CI to validate the queries.
+
+#include "std"
+
+#define TESTKIT_EXPECTED_EXIT_CODE 3
+
+const TITLE = "Gofra"
+
+struct Point
+    x int
+    y int
+end
+
+var origin Point = Point { x = 0, y = 0 }
+
+func int add[int a, int b]
+    a b +
+end
+
+func void main[]
+    var i int
+    var values = [1, 2, 3]
+
+    while i 10 < do
+        i 1 + !<
+    end
+
+    for i in 0..10 do
+        &origin.x values[i] call add !<
+    end
+
+    1 == if
+        "one" print
+    else
+        "other" print
+    end
+end

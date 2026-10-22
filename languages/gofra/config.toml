@@ -1,0 +1,6 @@
+name = "Gofra"
+grammar = "gofra"
+path_suffixes = ["gof", "gofra"]
+line_comments = ["//"]
+tab_size = 4
+hard_tabs = false

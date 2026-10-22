@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  queries:
+    name: Validate the tree-sitter queries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the tree-sitter CLI
+        uses: tree-sitter/setup-tree-sitter@v2
+        with:
+          version: 0.26.12
+
+      - name: Check out the grammar
+        run: |
+          git clone --depth 1 https://github.com/gofralang/tree-sitter-gofra tree-sitter-gofra
+          cd tree-sitter-gofra
+          git fetch --depth 1 origin "$GRAMMAR_REV"
+          git checkout "$GRAMMAR_REV"
+          tree-sitter generate
+        env:
+          GRAMMAR_REV: 4581270c1ef1c645b73a7ffad6245a989a4b4400
+
+      - name: Configure the tree-sitter parser directory
+        run: |
+          mkdir -p "$HOME/.config/tree-sitter"
+          cat > "$HOME/.config/tree-sitter/config.json" <<'EOF'
+          {
+            "parser-directories": ["$GITHUB_WORKSPACE"]
+          }
+          EOF
+
+      - name: Check that the queries compile
+        run: |
+          for query in languages/gofra/*.scm; do
+            echo "::group::$query"
+            tree-sitter query "$query" test/fixtures/example.gof
+            echo "::endgroup::"
+          done
+
+      - name: Check that the highlights match the grammar repository
+        run: |
+          diff -u tree-sitter-gofra/queries/highlights.scm languages/gofra/highlights.scm
