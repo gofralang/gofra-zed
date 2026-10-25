@@ -56,6 +56,8 @@
 
 (struct_declaration name: (identifier) @type)
 (union_declaration name: (identifier) @type)
+(enum_declaration name: (identifier) @type)
+(enum_member name: (identifier) @constant)
 (type_declaration name: (identifier) @type)
 (member name: (identifier) @property)
 (field_initializer name: (identifier) @property)
@@ -73,6 +75,7 @@
   "lambda"
   "struct"
   "union"
+  "enum"
   "type"
   "var"
   "const"

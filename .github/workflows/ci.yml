@@ -13,10 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install the tree-sitter CLI
-        uses: tree-sitter/setup-tree-sitter@v2
+      - name: Set up the tree-sitter CLI
+        uses: tree-sitter/setup-action@v2
         with:
-          version: 0.26.12
+          install-lib: false
+          tree-sitter-ref: v0.26.12
 
       - name: Check out the grammar
         run: |
@@ -31,11 +32,7 @@ jobs:
       - name: Configure the tree-sitter parser directory
         run: |
           mkdir -p "$HOME/.config/tree-sitter"
-          cat > "$HOME/.config/tree-sitter/config.json" <<'EOF'
-          {
-            "parser-directories": ["$GITHUB_WORKSPACE"]
-          }
-          EOF
+          printf '{\n  "parser-directories": ["%s"]\n}\n' "$GITHUB_WORKSPACE" > "$HOME/.config/tree-sitter/config.json"
 
       - name: Check that the queries compile
         run: |
@@ -48,3 +45,20 @@ jobs:
       - name: Check that the highlights match the grammar repository
         run: |
           diff -u tree-sitter-gofra/queries/highlights.scm languages/gofra/highlights.scm
+
+  extension:
+    name: Build the extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build the wasm extension
+        run: cargo build --target wasm32-wasip1 --release

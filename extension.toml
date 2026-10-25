@@ -1,6 +1,6 @@
 id = "gofra"
 name = "Gofra"
-version = "0.1.0"
+version = "0.2.0"
 schema_version = 1
 authors = ["Kirill Zhosul"]
 description = "Gofra language support for the Zed editor"
@@ -9,3 +9,7 @@ repository = "https://github.com/gofralang/gofra-zed"
 [grammars.gofra]
 repository = "https://github.com/gofralang/tree-sitter-gofra"
 rev = "4581270c1ef1c645b73a7ffad6245a989a4b4400"
+
+[language_servers.gofra]
+name = "Gofra Language Server"
+languages = ["Gofra"]
